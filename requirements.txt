@@ -4,4 +4,3 @@ openai
 flask
 apscheduler
 Flask-SocketIO
-eventlet

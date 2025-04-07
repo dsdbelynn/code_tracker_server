@@ -9,7 +9,6 @@ import subprocess
 from apscheduler.schedulers.background import BackgroundScheduler
 import time# 添加到导入部分
 from flask_socketio import SocketIO, emit
-import eventlet
 
 # 创建 Flask 应用后初始化 SocketIO
 app = Flask(__name__, static_url_path='', static_folder='public')
@@ -25,9 +24,9 @@ def handle_disconnect():
     print('客户端已断开连接')
 
 # 添加通知函数 - 供其他模块调用
-def notify_new_code(game_name, game_type):
-    print(f"通知客户端新的{game_type}兑换码...")
-    socketio.emit('new_code', {'game': game_type, 'game_name': game_name})
+def notify_new_code(game_name, key):
+    print(f"通知客户端新的{game_name}兑换码...")
+    socketio.emit('new_code', {'game_name': game_name, 'key': key})
 
 
 # 启动RSSHub的函数
@@ -96,6 +95,11 @@ def api_get_game_codes(game):
     game_name = game_mapping[game]
     codes = get_game_codes(game_name)
     return jsonify(codes)
+
+@app.route('/test_emit/<game>/<code>')
+def test_emit(game, code):
+    notify_new_code(game, code)
+    return f'已发送测试事件: {game} - {code}'
     
 if __name__ == '__main__':
     # 先启动RSSHub
