@@ -8,6 +8,7 @@ from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 from openai import OpenAI
 import json
+import requests
 
 # 导入数据库操作函数和游戏配置
 from db_operations import (
@@ -75,6 +76,22 @@ def process_with_deepseek(text):
         print(f"DeepSeek API调用失败: {e}")
         return None
 
+def send_code_notification(game_name, key):
+    """通过HTTP调用测试路由发送兑换码更新事件"""
+    print(f"通过HTTP接口通知客户端新的{game_name}兑换码...")
+    try:
+        url = f"http://127.0.0.1:3000/test_emit/{game_name}/{key}"
+        response = requests.get(url, timeout=5)
+        if response.status_code == 200:
+            print(f"HTTP通知成功: {response.text}")
+            return True
+        else:
+            print(f"HTTP通知失败，状态码: {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"HTTP通知出错: {e}")
+        return False
+
 def fetch_game_redemption_codes(game_name):
     """通用的游戏兑换码获取函数"""
     init_database()
@@ -118,11 +135,7 @@ def fetch_game_redemption_codes(game_name):
                             print(code)
                             # 保存到数据库
                             save_game_code(game_name, code)
-                            try:
-                                from app import notify_new_code
-                                notify_new_code(game_name, code["key"])
-                            except Exception as e:
-                                print(f"通知客户端出错: {e}")
+                            send_code_notification(game_name, code["key"])
                             flag = 1
                         except json.JSONDecodeError as e:
                             print(f"JSON解析错误: {e}")
