@@ -38,7 +38,7 @@ def notify_new_code(game_name, key):
     print(f"通知客户端新的{game_name}兑换码...")
     try:
         # 直接使用emit并广播到所有客户端
-        socketio.emit('new_code', {'game_name': game_name, 'key': key}, broadcast=True)
+        socketio.emit('new_code', {'game_name': game_name, 'key': key})
         print("Socket.IO事件已发送")
     except Exception as e:
         print(f"Socket.IO发送失败: {str(e)}")
