@@ -1,0 +1,7 @@
+python-dotenv
+feedparser
+openai
+flask
+apscheduler
+Flask-SocketIO
+eventlet

@@ -1,0 +1,322 @@
+/* public/style.css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+body {
+  background-color: #f5f7fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  position: relative;
+  color: #777;
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  color: #3498db;
+}
+
+.tab.active {
+  color: #3498db;
+  font-weight: bold;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #3498db;
+}
+
+.code-container {
+  position: relative;
+  min-height: 300px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.content {
+  display: none;
+}
+
+.code-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.code-item:last-child {
+  border-bottom: none;
+}
+
+.code-item:hover {
+  background-color: #f9f9f9;
+}
+
+.code-index {
+  font-weight: bold;
+  margin-right: 15px;
+  color: #3498db;
+  min-width: 30px;
+}
+
+.code-text {
+  flex-grow: 1;
+  margin-right: 15px;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.copy-btn {
+  background: #f1f1f1;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover {
+  background: #e0e0e0;
+}
+
+.copy-btn i {
+  margin-right: 5px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.3s;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.code-date {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-top: 5px;
+}
+
+/* 不同类型的信息使用不同颜色 */
+.code-key, .code-reward, .code-validity, .code-source {
+  margin-bottom: 5px;
+}
+
+.code-key strong {
+  color: #3498db; /* 蓝色 */
+}
+
+.code-reward strong {
+  color: #9b59b6; /* 紫色 */
+}
+
+.code-validity strong {
+  color: #e67e22; /* 橙色 */
+}
+
+.code-source strong {
+  color: #FFB6C1; /* 粉色 */
+}
+
+/* 源链接样式 */
+.code-source {
+  word-break: break-all;
+}
+
+.code-source a {
+  color: #2980b9;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.code-source a:hover {
+  color: #3498db;
+  text-decoration: underline;
+}
+
+/* 有效期限文本处理 */
+.validity-period {
+  display: inline-block;
+  word-break: break-word;
+}
+
+/* 动态字体大小调整 */
+@media (max-width: 768px) {
+  .code-text {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+  
+  .code-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px 10px;
+  }
+  
+  .code-text {
+    margin-bottom: 10px;
+    width: 100%;
+    font-size: 0.9rem;
+  }
+  
+  .copy-btn {
+    align-self: flex-end;
+    margin-top: 10px;
+  }
+  
+  .code-validity {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .validity-period {
+    margin-top: 2px;
+  }
+  
+  /* 源链接在小屏幕上的处理 */
+  .code-source a {
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 2px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* 增加间距 */
+  .code-key, .code-reward, .code-validity, .code-source {
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .code-text {
+    font-size: 0.85rem;
+  }
+  
+  .container {
+    padding: 10px;
+  }
+  
+  .code-item {
+    padding: 12px 8px;
+  }
+}
+
+/* 错误和无数据提示样式 */
+.error, .no-codes {
+  text-align: center;
+  padding: 20px;
+  color: #e74c3c;
+}
+
+.no-codes {
+  color: #7f8c8d;
+}
+
+/* 时间显示样式 */
+.current-time {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #2c3e50;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* 状态指示器样式 */
+.code-status {
+  margin-bottom: 5px;
+}
+
+.code-status strong {
+  color: #1abc9c; /* 青绿色 */
+}
+
+.status-active {
+  color: #27ae60; /* 绿色 */
+  font-weight: bold;
+}
+
+.status-expired {
+  color: #e74c3c; /* 红色 */
+}
+
+.status-unknown {
+  color: #95a5a6; /* 灰色 */
+}
