@@ -1,4 +1,7 @@
 # app.py
+import eventlet
+eventlet.monkey_patch()  # 必须在其他导入前调用
+
 from flask import Flask, jsonify, send_from_directory, request
 import sqlite3
 import os
@@ -22,11 +25,19 @@ def handle_connect():
 @socketio.on('disconnect')
 def handle_disconnect():
     print('客户端已断开连接')
-
-# 添加通知函数 - 供其他模块调用
+    
 def notify_new_code(game_name, key):
     print(f"通知客户端新的{game_name}兑换码...")
-    socketio.emit('new_code', {'game_name': game_name, 'key': key})
+    try:
+        # 使用background_task确保线程安全
+        socketio.start_background_task(
+            socketio.emit, 
+            'new_code', 
+            {'game_name': game_name, 'key': key}
+        )
+        print("Socket.IO事件已发送")
+    except Exception as e:
+        print(f"Socket.IO发送失败: {str(e)}")
 
 
 # 启动RSSHub的函数

@@ -121,7 +121,6 @@ def fetch_game_redemption_codes(game_name):
                             try:
                                 from app import notify_new_code
                                 notify_new_code(game_name, code["key"])
-                                print(f"通知客户端")
                             except Exception as e:
                                 print(f"通知客户端出错: {e}")
                             flag = 1
