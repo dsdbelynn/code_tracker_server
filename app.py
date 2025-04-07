@@ -15,7 +15,14 @@ from flask_socketio import SocketIO, emit
 
 # 创建 Flask 应用后初始化 SocketIO
 app = Flask(__name__, static_url_path='', static_folder='public')
-socketio = SocketIO(app, cors_allowed_origins="*")
+# 修改app.py中的socketio初始化
+socketio = SocketIO(
+    app, 
+    cors_allowed_origins="*",
+    async_mode='eventlet',  # 明确指定使用eventlet
+    logger=True,  # 启用详细日志
+    engineio_logger=True  # 启用引擎日志
+)
 
 # 添加 WebSocket 事件处理函数
 @socketio.on('connect')
@@ -26,15 +33,12 @@ def handle_connect():
 def handle_disconnect():
     print('客户端已断开连接')
     
+# 修改notify_new_code函数
 def notify_new_code(game_name, key):
     print(f"通知客户端新的{game_name}兑换码...")
     try:
-        # 使用background_task确保线程安全
-        socketio.start_background_task(
-            socketio.emit, 
-            'new_code', 
-            {'game_name': game_name, 'key': key}
-        )
+        # 直接使用emit并广播到所有客户端
+        socketio.emit('new_code', {'game_name': game_name, 'key': key}, broadcast=True)
         print("Socket.IO事件已发送")
     except Exception as e:
         print(f"Socket.IO发送失败: {str(e)}")
