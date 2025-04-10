@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import json
 import requests
-
+import urllib.parse
 # 导入数据库操作函数和游戏配置
 from db_operations import (
     init_database, save_game_code, update_check_time, 
@@ -31,7 +31,7 @@ def format_published_date(entry, default="2000-01-01 00:00:00"):
 def get_weibo_rss_content(uid) -> Optional[dict]:
     load_dotenv()
     rss_base_url = os.getenv('RSS_SOURCE', "http://192.168.137.250:1200")
-    url = f"{rss_base_url}/weibo/user/{uid}/showRetweeted=0"
+    url = f"{rss_base_url}/weibo/user/{uid}/showRetweeted=0&Pages=5"
     try:
         feed = feedparser.parse(url)
         if feed.get('bozo_exception') or (hasattr(feed, 'status') and feed.status != 200):
@@ -80,8 +80,11 @@ def send_code_notification(game_name, key):
     """通过HTTP调用测试路由发送兑换码更新事件"""
     print(f"通过HTTP接口通知客户端新的{game_name}兑换码...")
     try:
-        url = f"http://127.0.0.1:3000/test_emit/{game_name}/{key}"
-        response = requests.get(url, timeout=5)
+        # 构造JSON数据
+        json_data = {"key": key}
+        
+        url = f"http://127.0.0.1:3000/test_emit/{game_name}"
+        response = requests.post(url, json=json_data, timeout=5)
         if response.status_code == 200:
             print(f"HTTP通知成功: {response.text}")
             return True
@@ -91,6 +94,7 @@ def send_code_notification(game_name, key):
     except Exception as e:
         print(f"HTTP通知出错: {e}")
         return False
+
 
 def fetch_game_redemption_codes(game_name):
     """通用的游戏兑换码获取函数"""

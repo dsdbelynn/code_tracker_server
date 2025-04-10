@@ -7,12 +7,12 @@ db_file = 'database.db'
 GAME_CONFIGS = {
     "InfinityNikki": {
         "table_name": "InfinityNikkiCode",
-        "weibo_uids": ['7801655101', '7915828567', '7915670982'],
+        "weibo_uids": ['7801655101',],
         "api_endpoint": "infinity"
     },
     "ShiningNikki": {
         "table_name": "ShiningNikkiCode", 
-        "weibo_uids": ['6498105282', '7840676854', '7521490767'],
+        "weibo_uids": ['6498105282'],
         "api_endpoint": "shining"
     },
     "DeepSpace": {
