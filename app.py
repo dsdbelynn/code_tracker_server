@@ -10,7 +10,8 @@ import webbrowser
 import threading
 import subprocess
 from apscheduler.schedulers.background import BackgroundScheduler
-import time# 添加到导入部分
+import time
+import requests  # 新增：用于发送请求
 from flask_socketio import SocketIO, emit
 
 # 创建 Flask 应用后初始化 SocketIO
@@ -20,8 +21,8 @@ socketio = SocketIO(
     app, 
     cors_allowed_origins="*",
     async_mode='eventlet',  # 明确指定使用eventlet
-    logger=True,  # 启用详细日志
-    engineio_logger=True  # 启用引擎日志
+    logger=False,  # 启用详细日志
+    engineio_logger=False  # 启用引擎日志
 )
 
 # 添加 WebSocket 事件处理函数
@@ -34,11 +35,12 @@ def handle_disconnect():
     print('客户端已断开连接')
     
 # 修改notify_new_code函数
-def notify_new_code(game_name, key):
+def notify_new_code(game_name, json):
     print(f"通知客户端新的{game_name}兑换码...")
     try:
         # 直接使用emit并广播到所有客户端
-        socketio.emit('new_code', {'game_name': game_name, 'key': key})
+        
+        socketio.emit('new_code', {'game_name': game_name, 'key': json["key"]})
         print("Socket.IO事件已发送")
     except Exception as e:
         print(f"Socket.IO发送失败: {str(e)}")
@@ -58,6 +60,15 @@ def start_rsshub():
     )
     print(f"RSSHub已启动，进程ID: {process.pid}")
     return process
+
+# 新增：检查RSSHub是否可用的函数
+def is_rsshub_ready():
+    try:
+        # 假设RSSHub在本地1200端口运行，可根据实际情况调整
+        response = requests.get('http://localhost:1200/', timeout=2)
+        return response.status_code == 200
+    except requests.RequestException:
+        return False
 
 # 数据库文件路径
 DB_FILE = 'database.db'
@@ -122,7 +133,17 @@ if __name__ == '__main__':
 
     # 等待RSSHub启动完成
     print("等待RSSHub启动...")
-    time.sleep(20)  # 等待10秒，确保RSSHub有足够时间启动
+    
+    # 替换固定等待时间为请求检查
+    max_attempts = 30  # 最大尝试次数
+    attempt = 0
+    while True:
+        if is_rsshub_ready():
+            print("RSSHub已成功启动！")
+            break
+        print(f"RSSHub尚未就绪，尝试 {attempt+1}...")
+        attempt += 1
+        time.sleep(5)  # 每5秒检查一次
 
     # 确保数据库已初始化
     from db_operations import init_database
